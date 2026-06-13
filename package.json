@@ -1,0 +1,23 @@
+{
+  "name": "ai-automation-bot",
+  "version": "1.0.0",
+  "description": "Starter AI customer support chatbot with an Express backend and browser chat UI.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch-path=server.js server.js",
+    "start": "node server.js",
+    "test": "playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "openai": "^6.38.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}

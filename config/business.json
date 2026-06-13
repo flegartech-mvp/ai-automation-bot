@@ -1,0 +1,67 @@
+{
+  "businessName": "Nova Commerce",
+  "businessDescription": "An online store selling practical tech accessories, lifestyle products, and giftable everyday essentials.",
+  "industry": "e-commerce",
+  "toneOfVoice": "professional, friendly, concise, and sales-focused without being pushy",
+  "openingHours": "Monday-Friday, 9:00-17:00 CET",
+  "location": "Online store serving Slovenia and the EU",
+  "contact": {
+    "email": "support@novacommerce.example",
+    "phone": "+386 40 000 000",
+    "website": "https://novacommerce.example"
+  },
+  "products": [
+    {
+      "name": "Aurora Wireless Earbuds",
+      "price": "EUR 49.90",
+      "description": "Bluetooth earbuds with charging case, noise reduction, and up to 24 hours total battery life.",
+      "status": "available"
+    },
+    {
+      "name": "FlexCharge 3-in-1 Dock",
+      "price": "EUR 39.90",
+      "description": "Charging dock for phone, smartwatch, and earbuds.",
+      "status": "available"
+    },
+    {
+      "name": "MetroPack Travel Organizer",
+      "price": "EUR 24.90",
+      "description": "Compact organizer for cables, chargers, cards, and travel essentials.",
+      "status": "limited stock"
+    },
+    {
+      "name": "Luma Desk Lamp",
+      "price": "EUR 34.90",
+      "description": "Adjustable LED desk lamp with three brightness modes.",
+      "status": "available"
+    }
+  ],
+  "policies": [
+    {
+      "name": "Shipping",
+      "details": "Standard delivery is usually 2-5 business days after payment confirmation."
+    },
+    {
+      "name": "Returns",
+      "details": "Customers can request a return within 14 days if the item is unused and in original packaging."
+    },
+    {
+      "name": "Order confirmation",
+      "details": "New order and product requests collected by the chatbot are pending until the store team confirms them."
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Can I track my order?",
+      "answer": "Yes. Ask the customer for their order number and email, then mark the request as pending for the team."
+    },
+    {
+      "question": "Can I reserve an item?",
+      "answer": "Collect the customer name, email or phone, product name, quantity, and notes. Reservations are pending confirmation."
+    },
+    {
+      "question": "Do prices include VAT?",
+      "answer": "Yes, listed prices include VAT unless the store owner changes this config."
+    }
+  ]
+}

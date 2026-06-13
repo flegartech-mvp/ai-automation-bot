@@ -1,0 +1,15 @@
+node_modules/
+.env
+data/messages.json
+data/leads.json
+.server.log
+.server.err.log
+.smokebomb-server.log
+.smokebomb-server.err.log
+.smokebomb-server.pid
+.tmp/
+test-results/
+playwright-report/
+output/playwright/
+.DS_Store
+npm-debug.log*

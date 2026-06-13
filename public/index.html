@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI E-commerce Support Bot</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="chat-shell">
+      <section class="chat-workspace" aria-label="E-commerce support workspace">
+        <aside class="store-panel" aria-label="Store profile">
+          <div class="store-photo-wrap">
+            <img
+              class="store-photo"
+              src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=900&q=80"
+              alt=""
+            />
+          </div>
+
+          <div class="store-copy">
+            <p class="eyebrow">AI Messages Bot</p>
+            <h1 id="businessName">Online Store Support</h1>
+            <p id="businessDescription">
+              Product questions, order help, and customer request collection.
+            </p>
+          </div>
+
+          <div class="product-list" id="productList" aria-label="Featured products"></div>
+
+          <a class="admin-link" href="/admin">Open Admin</a>
+        </aside>
+
+        <section class="chat-panel" aria-label="Customer chat">
+          <header class="chat-topbar">
+            <div>
+              <p class="eyebrow">Customer Chat</p>
+              <h2 id="chatTitle">Support Assistant</h2>
+            </div>
+            <div class="status-pill" id="statusPill">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span id="statusText">Checking backend</span>
+            </div>
+          </header>
+
+          <section class="quick-actions" aria-label="Quick actions">
+            <button type="button" data-prompt="I want to order Aurora Wireless Earbuds. What do you need from me?">
+              Start order request
+            </button>
+            <button type="button" data-prompt="Can you help me choose a product?">
+              Product recommendation
+            </button>
+            <button type="button" data-prompt="I need help with an existing order.">
+              Order support
+            </button>
+          </section>
+
+          <div class="messages" id="messages" aria-live="polite"></div>
+
+          <footer class="chat-footer">
+            <div class="session-strip">
+              <span>Session <strong id="sessionLabel">New</strong></span>
+              <span>Messages <strong id="messageCount">0</strong></span>
+              <span>Model <strong id="modelName">-</strong></span>
+              <span id="leadStatus">No lead yet</span>
+            </div>
+
+            <form class="composer" id="chatForm">
+              <div class="composer-field">
+                <label class="sr-only" for="messageInput">Message</label>
+                <textarea
+                  id="messageInput"
+                  name="message"
+                  rows="3"
+                  placeholder="Ask about a product, delivery, return, or order"
+                  autocomplete="off"
+                ></textarea>
+                <p class="composer-error" id="composerError" role="alert" hidden></p>
+              </div>
+              <div class="composer-actions">
+                <button class="secondary-button" id="newChatButton" type="button">New</button>
+                <button class="send-button" id="sendButton" type="submit">Send</button>
+              </div>
+            </form>
+          </footer>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

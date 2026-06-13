@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section class="admin-workspace" aria-label="Admin dashboard">
+        <header class="admin-topbar">
+          <div>
+            <p class="eyebrow">Store Dashboard</p>
+            <h1 id="adminBusinessName">Admin</h1>
+          </div>
+          <nav class="admin-actions" aria-label="Admin actions">
+            <a href="/">Open Chat</a>
+            <button id="refreshButton" type="button">Refresh</button>
+          </nav>
+        </header>
+
+        <section class="stats-grid" aria-label="Dashboard stats">
+          <article class="stat-card">
+            <span>Conversations</span>
+            <strong id="conversationStat">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Leads</span>
+            <strong id="leadStat">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>New</span>
+            <strong id="newLeadStat">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Completed</span>
+            <strong id="completedLeadStat">0</strong>
+          </article>
+        </section>
+
+        <p class="admin-alert" id="adminAlert" role="alert" hidden></p>
+
+        <section class="admin-content">
+          <section class="admin-section" aria-label="Conversations">
+            <h2>Conversations</h2>
+            <div class="list-panel">
+              <div class="conversation-list" id="conversationList"></div>
+            </div>
+          </section>
+
+          <section class="admin-section" aria-label="Leads">
+            <h2>Leads</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Request</th>
+                    <th>Details</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="leadTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="/admin.js" type="module"></script>
+    <footer style="text-align:center;padding:16px 0 8px;font-size:11px;color:#888;">
+      Made by FlegarTech &mdash; <a href="https://paypal.me/TiniFlegar" target="_blank" rel="noopener noreferrer" style="color:#888;">Support development</a>
+    </footer>
+  </body>
+</html>
