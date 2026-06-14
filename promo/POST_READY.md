@@ -1,101 +1,42 @@
-# AI Automation Bot — POST_READY.md
+# AiAutomationBot — POST_READY
 
-## Status: ✅ 100% COPY-AND-POST READY
+## ✅ Post-worthy: YES (redesigned 2026-06-14)
 
----
+## Attach this file first
+`promo/images/01-square-post.png`  →  Instagram / LinkedIn feed
 
-## Best Image to Post First
-`promo/images/01-square-post.png` (1080x1080)
+## Best image to post first
+`promo/images/01-square-post.png`
 
-## Screenshots Used
-- `audit/screenshots/final-ready/AiAutomationBot/01-chat.png` (real app screenshot — chat UI)
-- `audit/screenshots/final-ready/AiAutomationBot/02-admin.png` (real app screenshot — admin panel)
+**Why it's the strongest:** The light "Nova Commerce Assistant" chat + product panel + admin context reads as a serious, configurable product rather than a gimmicky bot.
 
-## Promo Image Files
-| File | Size | Use For |
-|------|------|---------|
-| `promo/images/01-square-post.png` | 1080×1080 | Instagram, LinkedIn post |
-| `promo/images/02-story-reel-cover.png` | 1080×1920 | IG/TikTok story |
-| `promo/images/03-linkedin-banner.png` | 1600×900 | LinkedIn banner |
-| `promo/images/04-github-preview.png` | 1280×720 | GitHub social preview |
-| `promo/images/05-feature-card.png` | 1200×1200 | Product Hunt |
+## Recommended platform order
+LinkedIn → X → GitHub preview → Instagram
 
----
-
-## Exact Copy-Paste Caption
-
+## Exact caption (copy–paste)
 ```
-Built a self-hosted AI chat assistant with an admin dashboard 🤖
+Add an AI assistant to your store in minutes. 🤖
 
-AiAutomationBot is an open-source chatbot powered by OpenAI's API.
-You host it yourself, you control it.
+AiAutomationBot answers product, order and delivery questions, captures leads and ships with its own admin dashboard. One JSON config, GPT-powered.
 
-Features:
-→ Real-time AI chat (OpenAI GPT)
-→ Admin dashboard to manage conversations
-→ Node.js/Express backend
-→ 0 security vulnerabilities (npm audit clean)
-
-No subscription. Bring your own API key.
-GitHub link in bio.
-
-#ai #chatbot #openai #nodejs #selfhosted #developer #buildinpublic #opensource #automation
+#ai #automation #ecommerce #nodejs #saas
 ```
 
----
+## All 5 assets
+| File | Use for |
+|------|---------|
+| `promo/images/01-square-post.png` | 1080×1080 — Instagram / LinkedIn feed |
+| `promo/images/02-story-reel-cover.png` | 1080×1920 — IG / TikTok story & reel cover |
+| `promo/images/03-linkedin-banner.png` | 1600×900 — LinkedIn feature / X / YouTube |
+| `promo/images/04-github-preview.png` | 1280×720 — GitHub social preview |
+| `promo/images/05-feature-card.png` | 1200×1200 — Product Hunt / feature card |
 
-## Hashtags
-```
-#ai #chatbot #openai #automation #nodejs #express #selfhosted #developer #buildinpublic #opensource #flegartech
-```
+## Screenshot used
+final-ready/AiAutomationBot/01-chat.png — real chat UI
 
-## Suggested Platforms (in order)
-1. LinkedIn (AI audience strong there)
-2. Twitter/X
-3. Reddit r/selfhosted or r/webdev
-4. Instagram
-
----
-
-## Safe Public Claims
-- "Self-hosted AI chat assistant"
-- "Powered by OpenAI API (bring your own key)"
-- "Admin dashboard"
-- "Node.js/Express backend"
-- "0 security vulnerabilities"
-- "Open source"
-
-## Claims to AVOID
-- Avoid "AI that does anything" — it's a chatbot wrapper
-- Avoid implying GPT-4 specifically (use "OpenAI GPT")
-- Avoid automation claims for regulated industries (finance, medical)
-
----
-
-## 15-Second Video Script
-> "AiAutomationBot — a self-hosted AI chat assistant.
-> Powered by OpenAI. Includes an admin dashboard.
-> Bring your own API key. Host it yourself.
-> Open source — GitHub link in bio."
-
-## 30-Second Demo Script
-> "AiAutomationBot is an open-source AI chatbot you can self-host.
-> Here's the chat interface — type a message, get an AI response powered by OpenAI.
-> Here's the admin dashboard — see all conversations, manage settings.
-> The backend is Node.js and Express. Zero npm security vulnerabilities.
-> Bring your own OpenAI API key — you're in full control.
-> No subscription, no vendor lock-in, fully open source.
-> GitHub link in bio."
-
----
-
-## Promo Image Review
-- [x] All 5 images exist
-- [x] All correct sizes
-- [x] Real screenshot embedded
-- [x] No private information visible
+## QC checklist
+- [x] All 5 images exist at the correct sizes
+- [x] Real product screenshot used (no faked UI)
+- [x] Clean browser-frame composition, high-contrast readable text
+- [x] Unified FlegarTech brand (dark canvas + green accent)
 - [x] No fake claims
-- [x] Text readable
-- [x] Professional quality
-
-## Final Ready Status: ✅ COPY-AND-POST READY
