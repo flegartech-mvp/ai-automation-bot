@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: "chromium",
+    channel: process.env.PW_CHANNEL,
     actionTimeout: 10_000,
     navigationTimeout: 15_000,
     trace: "retain-on-failure",
@@ -25,6 +26,11 @@ export default defineConfig({
       PORT: String(port),
       DATA_DIR: ".tmp/smokebomb-data",
       OPENAI_API_KEY: "",
+      // The suite runs 4 viewport projects sequentially against one server from
+      // a single IP; raise rate limits so the shared in-memory limiter doesn't
+      // throttle later projects. (Rate limiting itself is verified separately.)
+      RATE_LIMIT_MAX: "100000",
+      CHAT_RATE_LIMIT_MAX: "100000",
     },
   },
   projects: [
