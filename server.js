@@ -10,11 +10,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT || 3000);
+const host = process.env.HOST || "0.0.0.0";
 const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const apiKey = cleanText(process.env.OPENAI_API_KEY || "");
 const hasUsableOpenAIKey =
   apiKey && !["sk-your-key-here", "your_real_key_here", "your-key-here"].includes(apiKey);
+
+// Comma-separated allowlist of origins permitted to call the API cross-origin.
+// Empty (default) => same-origin only; no CORS headers are emitted.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+// Simple in-memory rate limit (per IP). Suitable for a single instance; for
+// multi-instance deployments put a shared limiter (e.g. a proxy) in front.
+const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000);
+const rateLimitMax = Number(process.env.RATE_LIMIT_MAX || 60);
+const chatRateLimitMax = Number(process.env.CHAT_RATE_LIMIT_MAX || 20);
 
 const dataDir = process.env.DATA_DIR
   ? path.resolve(__dirname, process.env.DATA_DIR)
@@ -35,7 +50,93 @@ function requireAdminToken(req, res, next) {
   res.status(401).json({ error: "Unauthorized. Set Authorization: Bearer <ADMIN_TOKEN>." });
 }
 
+// --- Startup environment validation ---
+// Admin routes expose customer PII (names, emails, phones) and lead mutation.
+// In production they MUST be protected — refuse to start without ADMIN_TOKEN.
+function validateEnvironment() {
+  const errors = [];
+  if (isProduction && !adminToken) {
+    errors.push(
+      "ADMIN_TOKEN is required in production: /api/admin/* exposes customer PII and would otherwise be public."
+    );
+  }
+  if (isProduction && adminToken && adminToken.length < 16) {
+    errors.push("ADMIN_TOKEN is too short for production (use >= 16 random characters).");
+  }
+  if (errors.length) {
+    console.error("Environment validation failed:\n- " + errors.join("\n- "));
+    process.exit(1);
+  }
+  if (!hasUsableOpenAIKey) {
+    console.warn("No usable OPENAI_API_KEY set — running in local-demo mode (scripted replies).");
+  }
+  if (!isProduction && !adminToken) {
+    console.warn("ADMIN_TOKEN not set — /api/admin/* is OPEN. Fine for local dev only.");
+  }
+}
+validateEnvironment();
+
+// Trust the platform proxy (Railway/Render/Fly/Nginx) so req.ip is the real
+// client IP for rate limiting and not the proxy's address.
+if (isProduction || process.env.TRUST_PROXY) {
+  app.set("trust proxy", 1);
+}
+
+// Minimal security headers (no external dependency).
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("X-DNS-Prefetch-Control", "off");
+  next();
+});
+
+// CORS: only when an allowlist is configured; otherwise same-origin only.
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Max-Age", "600");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(origin && allowedOrigins.includes(origin) ? 204 : 403);
+  }
+  next();
+});
+
+// Fixed-window in-memory rate limiter keyed by IP + bucket name.
+const rateBuckets = new Map();
+function rateLimit(name, max) {
+  return (req, res, next) => {
+    const now = Date.now();
+    const key = `${name}:${req.ip}`;
+    const entry = rateBuckets.get(key);
+    if (!entry || now > entry.resetAt) {
+      rateBuckets.set(key, { count: 1, resetAt: now + rateLimitWindowMs });
+      return next();
+    }
+    entry.count += 1;
+    if (entry.count > max) {
+      const retryAfter = Math.ceil((entry.resetAt - now) / 1000);
+      res.setHeader("Retry-After", String(retryAfter));
+      return res.status(429).json({ error: "Too many requests. Please slow down." });
+    }
+    next();
+  };
+}
+// Periodically drop stale buckets so the map cannot grow unbounded.
+const rateCleanup = setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateBuckets) {
+    if (now > entry.resetAt) rateBuckets.delete(key);
+  }
+}, rateLimitWindowMs).unref();
+
 app.use(express.json({ limit: "1mb" }));
+app.use("/api", rateLimit("api", rateLimitMax));
 app.use(express.static(path.join(__dirname, "public")));
 
 async function ensureJsonFile(filePath, defaultValue) {
@@ -346,6 +447,11 @@ app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
+// Lightweight liveness probe for platforms (no I/O). Use this for health checks.
+app.get(["/health", "/healthz"], (req, res) => {
+  res.json({ status: "ok", uptime: process.uptime() });
+});
+
 app.get("/api/health", async (req, res) => {
   const config = await getBusinessConfig();
 
@@ -375,7 +481,7 @@ app.get("/api/messages", async (req, res) => {
   });
 });
 
-app.post("/api/chat", async (req, res) => {
+app.post("/api/chat", rateLimit("chat", chatRateLimitMax), async (req, res) => {
   const userMessage = cleanText(req.body?.message);
   const sessionId = cleanText(req.body?.sessionId) || crypto.randomUUID();
 
@@ -537,6 +643,26 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`AI automation messages bot running at http://localhost:${port}`);
+const server = app.listen(port, host, () => {
+  console.log(`AI automation messages bot running on http://${host}:${port} (mode: ${openai ? "openai" : "local-demo"})`);
+});
+
+// Graceful shutdown: stop accepting connections, finish in-flight requests.
+function shutdown(signal) {
+  console.log(`${signal} received — shutting down gracefully...`);
+  clearInterval(rateCleanup);
+  server.close(() => {
+    console.log("HTTP server closed. Bye.");
+    process.exit(0);
+  });
+  // Force-exit if connections don't drain in time.
+  setTimeout(() => {
+    console.error("Forced shutdown after timeout.");
+    process.exit(1);
+  }, 10_000).unref();
+}
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled promise rejection:", reason);
 });
