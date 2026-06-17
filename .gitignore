@@ -13,3 +13,23 @@ playwright-report/
 output/playwright/
 .DS_Store
 npm-debug.log*
+
+# --- repo cleanup hygiene (added) ---
+dist/
+build/
+out/
+.next/
+.turbo/
+.vite/
+.cache/
+coverage/
+output/
+tmp/
+*.log
+Thumbs.db
+*.swp
+*.bak
+*.orig
+.env.local
+.env.*.local
+promo/
