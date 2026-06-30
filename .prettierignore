@@ -1,0 +1,8 @@
+node_modules
+package-lock.json
+data
+.tmp
+test-results
+playwright-report
+output
+public/store.svg

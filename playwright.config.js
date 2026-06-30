@@ -5,6 +5,8 @@ const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: "./tests",
+  // Only *.spec.js is Playwright; *.test.js files use the Node test runner.
+  testMatch: "**/*.spec.js",
   globalSetup: "./tests/global-setup.js",
   fullyParallel: false,
   workers: 1,
@@ -44,11 +46,19 @@ export default defineConfig({
     },
     {
       name: "tablet-768",
-      use: { ...devices["iPad (gen 7)"], browserName: "chromium", viewport: { width: 768, height: 1024 } },
+      use: {
+        ...devices["iPad (gen 7)"],
+        browserName: "chromium",
+        viewport: { width: 768, height: 1024 },
+      },
     },
     {
       name: "mobile-390",
-      use: { ...devices["Pixel 5"], browserName: "chromium", viewport: { width: 390, height: 844 } },
+      use: {
+        ...devices["Pixel 5"],
+        browserName: "chromium",
+        viewport: { width: 390, height: 844 },
+      },
     },
   ],
 });

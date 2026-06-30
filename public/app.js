@@ -21,6 +21,7 @@ let sessionId = localStorage.getItem(sessionKey) || crypto.randomUUID();
 let messages = [];
 let isSending = false;
 let isTyping = false;
+let leadCaptured = false;
 
 localStorage.setItem(sessionKey, sessionId);
 
@@ -198,7 +199,10 @@ async function sendMessage(message) {
     isTyping = false;
     addLocalMessage("assistant", data.reply);
     updateStats(data.model);
-    leadStatus.textContent = data.leadCaptured ? "Lead saved" : "No lead yet";
+    // A lead persists for the whole session, so keep the indicator sticky once
+    // captured — don't downgrade it because a later message had no lead intent.
+    leadCaptured = leadCaptured || Boolean(data.leadCaptured);
+    leadStatus.textContent = leadCaptured ? "Lead saved" : "No lead yet";
   } catch (error) {
     isTyping = false;
     addErrorMessage(error.message);
@@ -247,6 +251,7 @@ newChatButton.addEventListener("click", () => {
   sessionId = crypto.randomUUID();
   localStorage.setItem(sessionKey, sessionId);
   messages = [];
+  leadCaptured = false;
   leadStatus.textContent = "No lead yet";
   setComposerError();
   renderMessages();

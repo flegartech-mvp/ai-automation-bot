@@ -14,6 +14,20 @@ Open:
 - Chat UI: `http://localhost:3000`
 - Admin dashboard: `http://localhost:3000/admin`
 
+## Admin Dashboard Access
+
+The admin dashboard and its API (`/api/admin/*`) expose customer PII (names,
+emails, phones). In production the server **requires** an `ADMIN_TOKEN` and the
+routes return `401` without it. Open the dashboard with the token in the URL:
+
+```text
+http://localhost:3000/admin?token=YOUR_ADMIN_TOKEN
+```
+
+The token is captured into `sessionStorage` and stripped from the URL, so it is
+not left in browser history. If you open `/admin` without it, the page prompts
+for the token. In local dev (no `ADMIN_TOKEN`) the dashboard is open.
+
 ## Add Your OpenAI API Key
 
 Create a `.env` file:
@@ -68,6 +82,21 @@ Statuses can be changed in `/admin`:
 For another e-commerce store, edit `config/business.json` with the new catalog, policies, and tone.
 
 For a different small business, replace `products` with services, update the policies/FAQs, and change the tone. The same lead capture and admin dashboard still work.
+
+## Scripts
+
+| Command                | Purpose                                                    |
+| ---------------------- | ---------------------------------------------------------- |
+| `npm run dev`          | Start with auto-reload on `server.js` changes              |
+| `npm start`            | Start the production server                                |
+| `npm run lint`         | ESLint over server, client, and tests                      |
+| `npm run format`       | Auto-format with Prettier                                  |
+| `npm run format:check` | Verify formatting (used in CI)                             |
+| `npm run test:auth`    | Node-test suite for production admin-token auth            |
+| `npm test`             | Playwright smoke tests across desktop/laptop/tablet/mobile |
+
+> If the bundled Playwright Chromium cannot be installed on your OS, run the
+> smoke tests against an installed Google Chrome with `PW_CHANNEL=chrome npm test`.
 
 ## Useful API Routes
 

@@ -293,8 +293,9 @@ function extractLeadCandidate(text, config) {
   const productInterest = findProductInterest(text, config);
   const preferredDateTime = extractPreferredDateTime(text);
   const orderNumber =
-    text.match(/\b(?:order|ord|invoice|tracking)\s*(?:number|no\.?|id|#)\s*([a-z0-9-]{4,})\b/i)?.[1] ||
-    "";
+    text.match(
+      /\b(?:order|ord|invoice|tracking)\s*(?:number|no\.?|id|#)\s*([a-z0-9-]{4,})\b/i
+    )?.[1] || "";
   const buyingIntent =
     /\b(buy|purchase|order|checkout|reserve|interested|need|want|looking for|quote|invoice|available|in stock|delivery|ship|track|return|exchange)\b/i.test(
       text
@@ -322,7 +323,9 @@ function extractLeadCandidate(text, config) {
     productInterest,
     orderNumber,
     preferredDateTime,
-    need: productInterest.length ? `Interested in ${productInterest.join(", ")}` : cleanText(text, 240),
+    need: productInterest.length
+      ? `Interested in ${productInterest.join(", ")}`
+      : cleanText(text, 240),
     notes: cleanText(text, 800),
     hasDetails,
   };
@@ -390,7 +393,7 @@ function generateLocalFallbackReply(message, config, lead) {
     return "I can help with that. Please send your name and email or phone, and the team will confirm the order details.";
   }
 
-  if (lead && (!lead.email && !lead.phone)) {
+  if (lead && !lead.email && !lead.phone) {
     return "Got it. What email or phone number should the team use to confirm this request?";
   }
 
@@ -415,16 +418,14 @@ function buildConversations(messages, leads) {
   const grouped = new Map();
 
   for (const message of messages) {
-    const existing =
-      grouped.get(message.sessionId) ||
-      {
-        sessionId: message.sessionId,
-        firstMessageAt: message.createdAt,
-        lastMessageAt: message.createdAt,
-        messageCount: 0,
-        latestMessage: "",
-        lead: leadBySession.get(message.sessionId) || null,
-      };
+    const existing = grouped.get(message.sessionId) || {
+      sessionId: message.sessionId,
+      firstMessageAt: message.createdAt,
+      lastMessageAt: message.createdAt,
+      messageCount: 0,
+      latestMessage: "",
+      lead: leadBySession.get(message.sessionId) || null,
+    };
 
     existing.messageCount += 1;
     existing.lastMessageAt = message.createdAt;
@@ -615,6 +616,7 @@ app.use((req, res) => {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Page Not Found</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="stylesheet" href="/styles.css" />
       </head>
       <body>
@@ -644,7 +646,9 @@ app.use((error, req, res, next) => {
 });
 
 const server = app.listen(port, host, () => {
-  console.log(`AI automation messages bot running on http://${host}:${port} (mode: ${openai ? "openai" : "local-demo"})`);
+  console.log(
+    `AI automation messages bot running on http://${host}:${port} (mode: ${openai ? "openai" : "local-demo"})`
+  );
 });
 
 // Graceful shutdown: stop accepting connections, finish in-flight requests.

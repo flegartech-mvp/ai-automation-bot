@@ -10,6 +10,60 @@ const adminAlert = document.querySelector("#adminAlert");
 
 const statuses = ["new", "contacted", "completed", "cancelled"];
 
+// --- Admin auth ---
+// /api/admin/* is protected by ADMIN_TOKEN in production. The dashboard accepts
+// the token via a `?token=...` URL param (captured once, then stripped from the
+// URL so it is not left in history/bookmarks) or by prompting on first 401.
+// The token is kept in sessionStorage so it clears when the tab closes.
+const tokenKey = "ai-commerce-admin-token";
+
+function getToken() {
+  return sessionStorage.getItem(tokenKey) || "";
+}
+
+function setToken(token) {
+  if (token) {
+    sessionStorage.setItem(tokenKey, token);
+  } else {
+    sessionStorage.removeItem(tokenKey);
+  }
+}
+
+(function captureTokenFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const urlToken = params.get("token");
+  if (urlToken) {
+    setToken(urlToken.trim());
+    params.delete("token");
+    const query = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : ""));
+  }
+})();
+
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : { ...extra };
+}
+
+// Fetch an admin endpoint with the stored token; on 401, prompt once for the
+// token and retry. Returns the final Response.
+async function adminFetch(url, options = {}) {
+  let response = await fetch(url, { ...options, headers: authHeaders(options.headers) });
+
+  if (response.status === 401) {
+    const entered = window.prompt("Admin token required. Paste your ADMIN_TOKEN to continue:");
+    if (entered && entered.trim()) {
+      setToken(entered.trim());
+      response = await fetch(url, { ...options, headers: authHeaders(options.headers) });
+    }
+    if (response.status === 401) {
+      setToken("");
+    }
+  }
+
+  return response;
+}
+
 function formatDate(value) {
   if (!value) {
     return "Unknown";
@@ -80,7 +134,7 @@ function createStatusSelect(lead) {
     select.disabled = true;
 
     try {
-      const response = await fetch(`/api/admin/leads/${lead.id}`, {
+      const response = await adminFetch(`/api/admin/leads/${lead.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: select.value }),
@@ -131,7 +185,8 @@ function renderLeads(leads = []) {
     const requestType = document.createElement("strong");
     requestType.textContent = lead.requestType || "customer inquiry";
     const products = document.createElement("span");
-    products.textContent = (lead.productInterest || []).join(", ") || lead.need || "No product listed";
+    products.textContent =
+      (lead.productInterest || []).join(", ") || lead.need || "No product listed";
     request.append(requestType, products);
 
     const details = document.createElement("td");
@@ -154,8 +209,15 @@ async function loadDashboard() {
 
   try {
     setAdminAlert();
-    const response = await fetch("/api/admin/summary");
-    const data = await response.json();
+    const response = await adminFetch("/api/admin/summary");
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 401) {
+      throw new Error(
+        data.error ||
+          "Unauthorized. Add ?token=YOUR_ADMIN_TOKEN to the URL or enter it when prompted."
+      );
+    }
 
     if (!response.ok) {
       throw new Error(data.error || "Dashboard failed to load.");

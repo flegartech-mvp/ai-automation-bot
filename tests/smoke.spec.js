@@ -33,12 +33,16 @@ async function expectNoSeriousConsole(page, run) {
   expect(problems).toEqual([]);
 }
 
-test("chat home loads, validates input, sends a lead, and survives refresh", async ({ page }, testInfo) => {
+test("chat home loads, validates input, sends a lead, and survives refresh", async ({
+  page,
+}, testInfo) => {
   await expectNoSeriousConsole(page, async () => {
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Nova Commerce", exact: true })).toBeVisible();
     await expect(page.getByText("Demo mode")).toBeVisible();
-    await expect(page.getByText("Ask about a product, order, delivery, return, or availability.")).toBeVisible();
+    await expect(
+      page.getByText("Ask about a product, order, delivery, return, or availability.")
+    ).toBeVisible();
 
     await saveScreenshot(page, testInfo, "home");
 
@@ -62,18 +66,27 @@ test("chat home loads, validates input, sends a lead, and survives refresh", asy
     await page.reload();
     await expect(page.getByText(message)).toBeVisible();
     await expect(page.getByText("pending request for the store team")).toBeVisible();
-    await expect(page.evaluate(() => localStorage.getItem("ai-commerce-session-id"))).resolves.toBeTruthy();
+    await expect(
+      page.evaluate(() => localStorage.getItem("ai-commerce-session-id"))
+    ).resolves.toBeTruthy();
 
     await page.getByRole("button", { name: "New" }).click();
-    await expect(page.getByText("Ask about a product, order, delivery, return, or availability.")).toBeVisible();
+    await expect(
+      page.getByText("Ask about a product, order, delivery, return, or availability.")
+    ).toBeVisible();
 
     await page.getByRole("link", { name: "Open Admin" }).click();
     await expect(page).toHaveURL(/\/admin$/);
-    await expect(page.getByRole("heading", { name: "Nova Commerce Admin", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Nova Commerce Admin", exact: true })
+    ).toBeVisible();
   });
 });
 
-test("quick actions, admin status updates, API validation, and 404 work", async ({ page, request }, testInfo) => {
+test("quick actions, admin status updates, API validation, and 404 work", async ({
+  page,
+  request,
+}, testInfo) => {
   await expectNoSeriousConsole(page, async () => {
     const email = `admin-${safeName(testInfo.project.name)}@example.com`;
 
@@ -95,15 +108,17 @@ test("quick actions, admin status updates, API validation, and 404 work", async 
     await expect(page.getByText("What product or order can I help with today?")).toBeVisible();
 
     await page.goto("/admin");
-    await expect(page.getByRole("heading", { name: "Nova Commerce Admin", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Nova Commerce Admin", exact: true })
+    ).toBeVisible();
     await expect(page.getByRole("row").filter({ hasText: email })).toBeVisible();
     await saveScreenshot(page, testInfo, "admin");
 
     const leadRow = page.getByRole("row").filter({ hasText: email });
     await leadRow.getByRole("combobox").selectOption("contacted");
-    await expect(page.getByRole("row").filter({ hasText: email }).getByRole("combobox")).toHaveValue(
-      "contacted"
-    );
+    await expect(
+      page.getByRole("row").filter({ hasText: email }).getByRole("combobox")
+    ).toHaveValue("contacted");
 
     await page.getByRole("button", { name: "Refresh" }).click();
     await expect(page.getByRole("row").filter({ hasText: email })).toBeVisible();
